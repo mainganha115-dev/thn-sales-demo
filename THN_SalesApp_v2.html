@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THN Sales – Quản lý Thị trường v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#2D7A22;--g2:#1a5214;--gl:#EAF3DE;--gl2:#C0DD97;
+  --or:#E8701A;--orl:#FEF3EC;
+  --bg:#F4F5F7;--surface:#fff;--border:#E1E4EA;
+  --text:#1A1D23;--muted:#6B7280;--hint:#9CA3AF;
+  --red:#DC2626;--redl:#FEE2E2;--redm:#B91C1C;
+  --blue:#1D6FB8;--bluel:#EBF3FF;--bluem:#1a5ba6;
+  --amber:#B45309;--amberl:#FEF3C7;
+  --purple:#6D28D9;--purplel:#F5F3FF;
+  --teal:#0F766E;--teall:#F0FDFA;
+  --r4:4px;--r6:6px;--r8:8px;--r12:12px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;display:flex;height:100vh;overflow:hidden}
+#sidebar{width:224px;background:#1C2B1A;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo-mark{font-size:15px;font-weight:700;color:#fff}
+.sb-logo-mark span{color:#7ed870}
+.sb-version{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px}
+.sb-user{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-av{width:28px;height:28px;border-radius:50%;background:#2D7A22;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.sb-uname{font-size:12px;color:rgba(255,255,255,.85);font-weight:500}
+.sb-ubranch{font-size:10px;color:rgba(255,255,255,.4)}
+.sb-sec{padding:14px 12px 4px;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase}
+.sb-item{display:flex;align-items:center;gap:9px;padding:7px 12px;margin:1px 4px;border-radius:var(--r6);cursor:pointer;color:rgba(255,255,255,.6);font-size:12.5px;font-weight:500;transition:.12s;border:none;background:transparent;width:calc(100% - 8px);text-align:left}
+.sb-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.sb-item.active{background:#2D7A22;color:#fff}
+.sb-item i{font-size:15px;flex-shrink:0}
+.sb-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
+.sb-badge.a{background:var(--amber)}
+.sb-badge.g{background:var(--g)}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:50px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.tb-title{font-size:14px;font-weight:600}
+.tb-sub{font-size:12px;color:var(--muted)}
+.tb-sep{color:var(--border)}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r6);font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);transition:.12s;white-space:nowrap}
+.btn:hover{background:var(--bg)}
+.btn.p{background:var(--g);color:#fff;border-color:var(--g)}.btn.p:hover{background:var(--g2)}
+.btn.b{background:var(--blue);color:#fff;border-color:var(--blue)}.btn.b:hover{background:#155d9e}
+.btn.r{background:var(--red);color:#fff;border-color:var(--red)}.btn.r:hover{background:var(--redm)}
+.btn.a{background:var(--or);color:#fff;border-color:var(--or)}
+.btn i{font-size:14px}
+#content{flex:1;overflow-y:auto;padding:20px}
+.page{display:none}.page.active{display:block}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{background:var(--surface);border-radius:var(--r8);padding:14px 16px;border:1px solid var(--border)}
+.stat-label{font-size:11px;color:var(--muted);margin-bottom:5px}
+.stat-val{font-size:22px;font-weight:700;line-height:1}
+.stat-val.g{color:var(--g)}.stat-val.r{color:var(--red)}.stat-val.a{color:var(--amber)}.stat-val.b{color:var(--blue)}
+.stat-trend{font-size:11px;color:var(--muted);margin-top:3px}
+.stat-trend.up{color:#059669}.stat-trend.dn{color:var(--red)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r8);margin-bottom:16px}
+.card-hd{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.card-title{font-size:13px;font-weight:600}
+.card-act{margin-left:auto;display:flex;gap:6px;align-items:center}
+.card-body{padding:16px}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:var(--bg);padding:7px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFBFC}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.badge.g{background:var(--gl);color:#27500A}
+.badge.r{background:var(--redl);color:var(--redm)}
+.badge.a{background:var(--amberl);color:var(--amber)}
+.badge.b{background:var(--bluel);color:var(--bluem)}
+.badge.gr{background:#F1F2F4;color:var(--muted)}
+.badge.p{background:var(--purplel);color:var(--purple)}
+.badge.t{background:var(--teall);color:var(--teal)}
+.prog{height:5px;border-radius:3px;background:var(--border);overflow:hidden;margin-top:4px}
+.prog-f{height:100%;border-radius:3px}
+.prog-f.g{background:var(--g)}.prog-f.a{background:var(--or)}.prog-f.r{background:var(--red)}.prog-f.b{background:var(--blue)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.av.g{background:var(--gl);color:#27500A}.av.b{background:var(--bluel);color:var(--bluem)}
+.av.a{background:var(--amberl);color:var(--amber)}.av.r{background:var(--redl);color:var(--redm)}
+.av.p{background:var(--purplel);color:var(--purple)}.av.t{background:var(--teall);color:var(--teal)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.search-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.search-bar input{flex:1;min-width:160px;border:1px solid var(--border);border-radius:var(--r6);padding:6px 10px;font-size:12.5px;background:var(--surface);color:var(--text);outline:none}
+.search-bar input:focus{border-color:var(--g)}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11.5px;font-weight:500;border:1px solid var(--border);background:var(--surface);cursor:pointer;color:var(--text);transition:.12s;white-space:nowrap}
+.chip.active{background:var(--gl);border-color:var(--gl2);color:#27500A}
+.form-group{margin-bottom:12px}
+.form-label{font-size:11.5px;font-weight:500;color:var(--muted);margin-bottom:4px;display:block}
+.form-control{width:100%;border:1px solid var(--border);border-radius:var(--r6);padding:7px 10px;font-size:12.5px;color:var(--text);background:var(--surface);outline:none;font-family:inherit}
+.form-control:focus{border-color:var(--g)}
+select.form-control{cursor:pointer}
+.alert{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:var(--r6);margin-bottom:8px;font-size:12px}
+.alert.r{background:var(--redl);color:var(--redm);border:1px solid #FCA5A5}
+.alert.a{background:var(--amberl);color:var(--amber);border:1px solid #FCD34D}
+.alert.g{background:var(--gl);color:#27500A;border:1px solid var(--gl2)}
+.alert.b{background:var(--bluel);color:var(--bluem);border:1px solid #93C5FD}
+.alert i{font-size:14px;flex-shrink:0;margin-top:1px}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--r12);padding:20px;width:480px;max-height:85vh;overflow-y:auto}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.modal-title{font-size:14px;font-weight:600}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 14px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.12s;white-space:nowrap}
+.tab.active{color:var(--g);border-bottom-color:var(--g)}
+.dp{position:fixed;right:0;top:0;bottom:0;width:380px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;z-index:50;transform:translateX(100%);transition:transform .2s}
+.dp.open{transform:none}
+.dp-hd{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.dp-close{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px}
+.dp-body{flex:1;overflow-y:auto;padding:16px}
+.dp-sec{margin-bottom:14px}
+.dp-sec-title{font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.dp-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.dp-row:last-child{border-bottom:none}
+.dp-k{color:var(--muted)}.dp-v{font-weight:500}
+.tl-item{display:flex;gap:10px;margin-bottom:10px}
+.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.tl-dot.g{background:var(--g)}.tl-dot.a{background:var(--or)}.tl-dot.gr{background:var(--hint)}.tl-dot.r{background:var(--red)}.tl-dot.b{background:var(--blue)}
+.tl-body{font-size:12px}
+.tl-ttl{font-weight:600;color:var(--text)}
+.tl-meta{color:var(--hint);font-size:11px}
+.section-tabs{display:flex;gap:4px;margin-bottom:16px}
+.section-tab{padding:6px 14px;border-radius:var(--r6);font-size:12.5px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:.12s}
+.section-tab.active{background:var(--g);color:#fff;border-color:var(--g)}
+.sub-page{display:none}.sub-page.active{display:block}
+.integration-box{border:1px solid var(--border);border-radius:var(--r8);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.int-icon{width:40px;height:40px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.int-status{margin-left:auto;display:flex;align-items:center;gap:8px}
+.dot-live{width:7px;height:7px;border-radius:50%;background:var(--g);flex-shrink:0}
+.dot-off{width:7px;height:7px;border-radius:50%;background:var(--hint);flex-shrink:0}
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kanban-col{background:var(--bg);border-radius:var(--r8);padding:10px;min-height:200px}
+.kanban-hd{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.kanban-card{background:var(--surface);border-radius:var(--r6);padding:10px;border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.12s}
+.kanban-card:hover{border-color:var(--g)}
+.kanban-card-title{font-size:12.5px;font-weight:600;margin-bottom:4px}
+.kanban-card-sub{font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">THN<span>•</span>Sales</div>
+    <div class="sb-version">v2.0 · Sales Management System</div>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av">NT</div>
+    <div><div class="sb-uname">Nguyễn Thành</div><div class="sb-ubranch">Chi nhánh HCM · Sale</div></div>
+  </div>
+
+  <div class="sb-sec">Tổng quan</div>
+  <button class="sb-item active" onclick="nav('dashboard',this)"><i class="ti ti-layout-dashboard"></i>Dashboard</button>
+
+  <div class="sb-sec">Khách hàng & Thị trường</div>
+  <button class="sb-item" onclick="nav('customers',this)"><i class="ti ti-users"></i>Quản lý khách hàng</button>
+  <button class="sb-item" onclick="nav('market',this)"><i class="ti ti-map-pin"></i>Chăm sóc thị trường</button>
+  <button class="sb-item" onclick="nav('workplan',this)"><i class="ti ti-calendar"></i>Kế hoạch làm việc</button>
+
+  <div class="sb-sec">Bán hàng</div>
+  <button class="sb-item" onclick="nav('neworder',this)"><i class="ti ti-shopping-cart"></i>Tạo đơn hàng<span class="sb-badge">3</span></button>
+  <button class="sb-item" onclick="nav('orders',this)"><i class="ti ti-clipboard-list"></i>Quản lý & Duyệt đơn<span class="sb-badge a">5</span></button>
+
+  <div class="sb-sec">Bảo hành</div>
+  <button class="sb-item" onclick="nav('warranty',this)"><i class="ti ti-tool"></i>Bảo hành & Phụ tùng<span class="sb-badge a">4</span></button>
+
+  <div class="sb-sec">Tài chính</div>
+  <button class="sb-item" onclick="nav('debt',this)"><i class="ti ti-credit-card"></i>Công nợ<span class="sb-badge">2</span></button>
+
+  <div class="sb-sec">Chính sách & KPI</div>
+  <button class="sb-item" onclick="nav('programs',this)"><i class="ti ti-gift"></i>Chương trình bán hàng</button>
+  <button class="sb-item" onclick="nav('kpi',this)"><i class="ti ti-trophy"></i>KPI Sale</button>
+
+  <div class="sb-sec">Phân tích</div>
+  <button class="sb-item" onclick="nav('reports',this)"><i class="ti ti-chart-bar"></i>Báo cáo & Xuất dữ liệu</button>
+
+  <div class="sb-sec">Hệ thống</div>
+  <button class="sb-item" onclick="nav('integration',this)"><i class="ti ti-plug"></i>Kết nối ERP</button>
+</div>
+
+<div id="main">
+  <div id="topbar">
+    <span class="tb-title" id="tb-title">Dashboard</span>
+    <span class="tb-sep">|</span>
+    <span class="tb-sub" id="tb-sub">Tổng quan · 09/06/2025</span>
+    <div class="tb-right">
+      <button class="btn p" onclick="openModal('mo-order')"><i class="ti ti-plus"></i>Đơn hàng mới</button>
+      <button class="btn" style="position:relative"><i class="ti ti-bell"></i><span style="position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:var(--red)"></span></button>
+    </div>
+  </div>
+  <div id="content">
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div id="page-dashboard" class="page active">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Doanh số tháng 6</div><div class="stat-val g">1,84 tỷ</div><div class="stat-trend up">↑ 12% so tháng 5</div></div>
+        <div class="stat"><div class="stat-label">Đơn chờ duyệt</div><div class="stat-val a">5</div><div class="stat-trend">Cần xử lý hôm nay</div></div>
+        <div class="stat"><div class="stat-label">Bảo hành đang xử lý</div><div class="stat-val b">12</div><div class="stat-trend">4 quá hạn phản hồi</div></div>
+        <div class="stat"><div class="stat-label">KPI tháng 6</div><div class="stat-val g">82%</div><div class="stat-trend up">↑ còn 21 ngày</div></div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-alert-triangle" style="color:var(--red);font-size:15px"></i><span class="card-title">Cần xử lý ngay</span><span class="badge r" style="margin-left:auto">7</span></div>
+            <div class="card-body" style="padding:10px 14px">
+              <div class="alert r"><i class="ti ti-x-circle"></i><div><b>CH Phước Lộc:</b> Nợ quá hạn 65 ngày · Cấm bán</div></div>
+              <div class="alert a"><i class="ti ti-clock"></i><div><b>5 đơn hàng</b> chờ duyệt · lâu nhất 45 phút</div></div>
+              <div class="alert a"><i class="ti ti-tool"></i><div><b>4 phiếu bảo hành</b> quá hạn phản hồi</div></div>
+              <div class="alert b"><i class="ti ti-refresh"></i><div>Đồng bộ ERP lần cuối: <b>08:30</b> · 12 bản ghi mới</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-chart-bar" style="font-size:15px;color:var(--g)"></i><span class="card-title">Doanh số 7 ngày</span></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:flex-end;gap:6px;height:60px" id="chart-bars"></div>
+              <div style="display:flex;gap:6px;margin-top:5px" id="chart-labels"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-clock" style="font-size:15px;color:var(--or)"></i><span class="card-title">Đơn chờ duyệt</span><div class="card-act"><button class="btn" onclick="nav('orders',null)">Xem tất cả</button></div></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>Khách hàng</th><th>Giá trị</th><th>Chờ</th><th></th></tr></thead>
+              <tbody>
+                <tr><td><b>CH Cần Thơ</b><div style="font-size:11px;color:var(--muted)">Bình xịt × 20</div></td><td style="font-weight:600">8,3tr</td><td style="color:var(--or)">45p</td><td><button class="btn p" style="padding:3px 10px;font-size:11.5px" onclick="approveOrder(this,'#DH0642')">Duyệt</button></td></tr>
+                <tr><td><b>CH Lâm Đồng</b><div style="font-size:11px;color:var(--muted)">Máy cắt cỏ × 5</div></td><td style="font-weight:600">12,5tr</td><td style="color:var(--or)">32p</td><td><button class="btn p" style="padding:3px 10px;font-size:11.5px" onclick="approveOrder(this,'#DH0641')">Duyệt</button></td></tr>
+                <tr><td><b>CH Đắk Lắk</b><div style="font-size:11px;color:var(--muted)">Dây hơi × 50</div></td><td style="font-weight:600">6,25tr</td><td style="color:var(--muted)">18p</td><td><button class="btn p" style="padding:3px 10px;font-size:11.5px" onclick="approveOrder(this,'#DH0640')">Duyệt</button></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-trophy" style="font-size:15px;color:var(--amber)"></i><span class="card-title">Top Sale tháng 6</span></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>#</th><th>Sale</th><th>Doanh số</th><th>KPI</th></tr></thead>
+              <tbody>
+                <tr><td><b style="color:var(--or)">#1</b></td><td><div style="display:flex;align-items:center;gap:7px"><div class="av g">NT</div>Nguyễn Thành</div></td><td style="font-weight:600">680tr</td><td><span style="color:var(--g);font-size:12px;font-weight:600">94%</span><div class="prog"><div class="prog-f g" style="width:94%"></div></div></td></tr>
+                <tr><td><b style="color:var(--muted)">#2</b></td><td><div style="display:flex;align-items:center;gap:7px"><div class="av b">ML</div>Mai Linh</div></td><td style="font-weight:600">540tr</td><td><span style="color:var(--g);font-size:12px;font-weight:600">82%</span><div class="prog"><div class="prog-f g" style="width:82%"></div></div></td></tr>
+                <tr><td><b style="color:var(--muted)">#3</b></td><td><div style="display:flex;align-items:center;gap:7px"><div class="av a">TH</div>Trung Hiếu</div></td><td style="font-weight:600">385tr</td><td><span style="color:var(--amber);font-size:12px;font-weight:600">61%</span><div class="prog"><div class="prog-f a" style="width:61%"></div></div></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CUSTOMERS ══════════ -->
+    <div id="page-customers" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Tổng KH</div><div class="stat-val">247</div></div>
+        <div class="stat"><div class="stat-label">Đại lý Cấp 1</div><div class="stat-val g">42</div></div>
+        <div class="stat"><div class="stat-label">Cấp 2 + 3</div><div class="stat-val">138</div></div>
+        <div class="stat"><div class="stat-label">NPP</div><div class="stat-val b">12</div></div>
+      </div>
+      <div class="card">
+        <div class="search-bar">
+          <i class="ti ti-search" style="color:var(--muted)"></i>
+          <input type="text" placeholder="Tìm theo tên, mã, điện thoại...">
+          <span class="chip active">Tất cả</span><span class="chip">Cấp 1</span><span class="chip">Cấp 2</span><span class="chip">NPP</span><span class="chip">VIP</span><span class="chip">Cảnh báo</span>
+          <button class="btn p" onclick="openModal('mo-customer')"><i class="ti ti-plus"></i>Thêm KH</button>
+        </div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Khách hàng</th><th>Loại</th><th>Khu vực</th><th>Sale</th><th>Hạn mức</th><th>Dư nợ</th><th>Trạng thái</th><th></th></tr></thead>
+          <tbody>
+            <tr style="cursor:pointer" onclick="openDp('dp-customer')"><td><div style="display:flex;align-items:center;gap:8px"><div class="av g">VT</div><div><div style="font-weight:500">CH Vân – Tân Tiến, Cần Thơ</div><div style="font-size:11px;color:var(--muted)">0901 234 567</div></div></div></td><td><span class="badge b">Cấp 1</span></td><td>Cần Thơ</td><td>N.Thành</td><td>100tr</td><td style="color:var(--g);font-weight:500">35,2tr</td><td><span class="badge g">Bình thường</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av a">CL</div><div><div style="font-weight:500">CH Chiêu Ly – Minh Sơn, Q.Ngãi</div><div style="font-size:11px;color:var(--muted)">0905 678 901</div></div></div></td><td><span class="badge p">NPP</span></td><td>Quảng Ngãi</td><td>T.Văn B</td><td>80tr</td><td style="color:var(--or);font-weight:500">78tr</td><td><span class="badge a">Gần hạn</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av r">TH</div><div><div style="font-weight:500">CH Thảo – Phước Lộc, TP.HCM</div><div style="font-size:11px;color:var(--muted)">0912 345 678</div></div></div></td><td><span class="badge gr">Cấp 2</span></td><td>TP.HCM</td><td>M.Linh</td><td>50tr</td><td style="color:var(--red);font-weight:500">28,5tr</td><td><span class="badge r">Cấm bán</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av b">VY</div><div><div style="font-weight:500">CH Vy – Châu Mai Tý, Đắk Lắk</div><div style="font-size:11px;color:var(--muted)">0908 111 222</div></div></div></td><td><span class="badge b">Cấp 1</span></td><td>Đắk Lắk</td><td>N.Thành</td><td>120tr</td><td style="color:var(--g);font-weight:500">42,5tr</td><td><span class="badge g">VIP ★</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+            <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av g">DT</div><div><div style="font-weight:500">CH Đức Tiệp – Quảng Ninh</div><div style="font-size:11px;color:var(--muted)">0978 654 321</div></div></div></td><td><span class="badge b">Cấp 1</span></td><td>Quảng Ninh</td><td>L.Văn C</td><td>90tr</td><td style="color:var(--g);font-weight:500">22tr</td><td><span class="badge g">Bình thường</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ WORK PLAN ══════════ -->
+    <div id="page-workplan" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Kế hoạch tháng 6</div><div class="stat-val">24 hoạt động</div></div>
+        <div class="stat"><div class="stat-label">Đã hoàn thành</div><div class="stat-val g">16</div></div>
+        <div class="stat"><div class="stat-label">Đang thực hiện</div><div class="stat-val a">5</div></div>
+        <div class="stat"><div class="stat-label">Chưa bắt đầu</div><div class="stat-val b">3</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-calendar" style="font-size:15px;color:var(--g)"></i><span class="card-title">Kế hoạch làm việc – Tháng 6/2025</span><div class="card-act"><button class="btn p" onclick="openModal('mo-plan')"><i class="ti ti-plus"></i>Thêm KH</button></div></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Hoạt động</th><th>Sale</th><th>Hạn</th><th>Tiến độ</th><th>TT</th></tr></thead>
+            <tbody>
+              <tr><td><div style="font-weight:500">Thăm 15 KH Cấp 1 tại HCM</div><div style="font-size:11px;color:var(--muted)">Chăm sóc thị trường</div></td><td>N.Thành</td><td>30/06</td><td><div style="font-size:11px;font-weight:600;color:var(--g)">13/15</div><div class="prog"><div class="prog-f g" style="width:87%"></div></div></td><td><span class="badge g">Đúng tiến độ</span></td></tr>
+              <tr><td><div style="font-weight:500">Giới thiệu SP mới Presmax MAX-20BD</div><div style="font-size:11px;color:var(--muted)">Demo sản phẩm</div></td><td>M.Linh</td><td>15/06</td><td><div style="font-size:11px;font-weight:600;color:var(--or)">6/10</div><div class="prog"><div class="prog-f a" style="width:60%"></div></div></td><td><span class="badge a">Chậm tiến độ</span></td></tr>
+              <tr><td><div style="font-weight:500">Thu hồi công nợ quá hạn Q1</div><div style="font-size:11px;color:var(--muted)">Tài chính</div></td><td>M.Linh</td><td>20/06</td><td><div style="font-size:11px;font-weight:600;color:var(--red)">2/5 KH</div><div class="prog"><div class="prog-f r" style="width:40%"></div></div></td><td><span class="badge r">Cần hỗ trợ</span></td></tr>
+              <tr><td><div style="font-weight:500">Mở rộng thị trường Tây Nguyên</div><div style="font-size:11px;color:var(--muted)">Phát triển thị trường</div></td><td>N.Thành</td><td>30/06</td><td><div style="font-size:11px;font-weight:600;color:var(--g)">3/5 tỉnh</div><div class="prog"><div class="prog-f g" style="width:60%"></div></div></td><td><span class="badge g">Đúng tiến độ</span></td></tr>
+              <tr><td><div style="font-weight:500">Chốt hợp đồng NPP Miền Trung</div><div style="font-size:11px;color:var(--muted)">Phát triển kênh</div></td><td>L.Văn C</td><td>25/06</td><td><div style="font-size:11px;font-weight:600;color:var(--blue)">Đang đàm phán</div><div class="prog"><div class="prog-f b" style="width:50%"></div></div></td><td><span class="badge b">Đang làm</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-list-check" style="font-size:15px"></i><span class="card-title">Việc cần làm hôm nay – 09/06</span></div>
+            <div class="card-body" style="padding:10px 14px">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r6)">
+                  <input type="checkbox" checked style="accent-color:var(--g)">
+                  <div style="flex:1"><div style="font-size:12.5px;font-weight:500;text-decoration:line-through;color:var(--muted)">Thăm CH Vân – Cần Thơ · 8:00</div></div>
+                  <span class="badge g">Xong</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r6)">
+                  <input type="checkbox" checked style="accent-color:var(--g)">
+                  <div style="flex:1"><div style="font-size:12.5px;font-weight:500;text-decoration:line-through;color:var(--muted)">Duyệt 3 đơn hàng buổi sáng</div></div>
+                  <span class="badge g">Xong</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--amberl);border-radius:var(--r6);border:1px solid #FCD34D">
+                  <input type="checkbox" style="accent-color:var(--g)">
+                  <div style="flex:1"><div style="font-size:12.5px;font-weight:500;color:var(--amber)">Thăm CH Sáng Tú – Lâm Đồng · 14:00</div></div>
+                  <span class="badge a">Đang làm</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r6)">
+                  <input type="checkbox" style="accent-color:var(--g)">
+                  <div style="flex:1"><div style="font-size:12.5px;font-weight:500">Demo Presmax MAX-20BD tại CH Minh Sơn</div></div>
+                  <span class="badge gr">Chưa làm</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg);border-radius:var(--r6)">
+                  <input type="checkbox" style="accent-color:var(--g)">
+                  <div style="flex:1"><div style="font-size:12.5px;font-weight:500">Báo cáo kết quả tuần cho Quản lý · 17:00</div></div>
+                  <span class="badge gr">Chưa làm</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-chart-pie" style="font-size:15px;color:var(--g)"></i><span class="card-title">Tiến độ tổng thể tháng 6</span></div>
+            <div class="card-body">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div style="background:var(--bg);border-radius:var(--r6);padding:12px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--g)">67%</div><div style="font-size:11px;color:var(--muted)">Hoàn thành kế hoạch</div></div>
+                <div style="background:var(--bg);border-radius:var(--r6);padding:12px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--amber)">21%</div><div style="font-size:11px;color:var(--muted)">Đang thực hiện</div></div>
+                <div style="background:var(--bg);border-radius:var(--r6);padding:12px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--red)">8%</div><div style="font-size:11px;color:var(--muted)">Chậm tiến độ</div></div>
+                <div style="background:var(--bg);border-radius:var(--r6);padding:12px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--blue)">4%</div><div style="font-size:11px;color:var(--muted)">Chưa bắt đầu</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ MARKET ══════════ -->
+    <div id="page-market" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Kế hoạch hôm nay</div><div class="stat-val">12 điểm</div></div>
+        <div class="stat"><div class="stat-label">Đã thăm</div><div class="stat-val g">7</div></div>
+        <div class="stat"><div class="stat-label">Chưa thăm</div><div class="stat-val a">5</div></div>
+        <div class="stat"><div class="stat-label">Chốt đơn sau thăm</div><div class="stat-val">4/7</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-map-pin" style="font-size:15px;color:var(--g)"></i><span class="card-title">Lịch thăm viếng – 09/06/2025</span></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Khách hàng</th><th>Giờ</th><th>Check-in GPS</th><th>Kết quả</th><th>TT</th></tr></thead>
+            <tbody>
+              <tr><td><b>CH Vân – Cần Thơ</b></td><td>08:00</td><td style="font-size:11px;color:var(--g)">✓ 08:05<br><span style="color:var(--hint)">10.234, 106.123</span></td><td style="font-size:11.5px">Đặt hàng 8,3tr</td><td><span class="badge g">Hoàn thành</span></td></tr>
+              <tr><td><b>CH Vy – Đắk Lắk</b></td><td>09:30</td><td style="font-size:11px;color:var(--g)">✓ 09:42</td><td style="font-size:11.5px">Hỏi SP Presmax mới</td><td><span class="badge g">Hoàn thành</span></td></tr>
+              <tr><td><b>CH Sáng Tú – Lâm Đồng</b></td><td>11:00</td><td style="font-size:11px;color:var(--or)">▶ 11:22 – đang thăm</td><td style="font-size:11.5px;color:var(--hint)">Đang ghi nhận...</td><td><span class="badge a">Đang thăm</span></td></tr>
+              <tr><td><b>CH Thanh Huyền – Nghệ An</b></td><td>14:00</td><td style="font-size:11px;color:var(--hint)">Chưa check-in</td><td style="font-size:11px;color:var(--hint)">—</td><td><span class="badge gr">Chưa đến</span></td></tr>
+              <tr><td><b>CH Đức Tiệp – Q.Ninh</b></td><td>15:30</td><td style="font-size:11px;color:var(--hint)">Chưa check-in</td><td style="font-size:11px;color:var(--hint)">—</td><td><span class="badge gr">Chưa đến</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-pencil" style="font-size:15px"></i><span class="card-title">Ghi nhận kết quả thăm viếng</span></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Khách hàng</label><select class="form-control"><option>CH Sáng Tú – Lâm Đồng</option></select></div>
+            <div class="form-group"><label class="form-label">Kết quả</label><select class="form-control"><option>Đặt hàng</option><option>Hẹn lại</option><option>Không gặp</option></select></div>
+            <div class="form-group"><label class="form-label">Ghi chú</label><textarea class="form-control" rows="3" placeholder="Nhu cầu, phản hồi sản phẩm..."></textarea></div>
+            <button class="btn p" style="width:100%"><i class="ti ti-check"></i>Lưu & Check-out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ NEW ORDER ══════════ -->
+    <div id="page-neworder" class="page">
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-user" style="font-size:15px;color:var(--g)"></i><span class="card-title">Bước 1 – Chọn khách hàng</span></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">Khách hàng</label>
+                <select class="form-control" onchange="checkCustomer(this)">
+                  <option value="">-- Chọn khách hàng --</option>
+                  <option value="ok">CH Vân – Tân Tiến, Cần Thơ (Cấp 1 · VIP)</option>
+                  <option value="warn">CH Minh Sơn – Quảng Ngãi (NPP · Gần hạn)</option>
+                  <option value="block">CH Phước Lộc – TP.HCM (Cấp 2 · CẤM BÁN)</option>
+                </select>
+              </div>
+              <div id="cust-info" style="display:none"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-shopping-cart" style="font-size:15px;color:var(--g)"></i><span class="card-title">Bước 2 – Nhập hàng hóa</span></div>
+            <div class="card-body">
+              <div style="display:flex;gap:8px;margin-bottom:10px">
+                <select class="form-control" id="prod-sel">
+                  <option value="">-- Chọn sản phẩm --</option>
+                  <option value="bx20">Bình xịt Mitsuyama TL-20BD – 250.000đ</option>
+                  <option value="dx29">Đầu xịt Yataka CS-29 – 120.000đ</option>
+                  <option value="mcc33">Máy cắt cỏ TL-33N – 2.500.000đ</option>
+                  <option value="dh85">Dây hơi 8.5mm×50m – 125.000đ</option>
+                </select>
+                <input type="number" class="form-control" id="qty-i" value="1" min="1" style="width:70px">
+                <button class="btn p" onclick="addLine()"><i class="ti ti-plus"></i></button>
+              </div>
+              <div id="order-lines"><div style="color:var(--hint);font-size:12px;text-align:center;padding:20px">Chưa có sản phẩm</div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-receipt" style="font-size:15px;color:var(--g)"></i><span class="card-title">Tóm tắt đơn hàng</span></div>
+            <div class="card-body">
+              <div id="sum-lines"><div style="color:var(--hint);font-size:12px">Chưa có sản phẩm</div></div>
+              <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:8px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;color:var(--muted)"><span>Tổng trước CK</span><span id="s-before">0 đ</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;color:var(--g)"><span>CK thương mại (3%)</span><span id="s-ck1">0 đ</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding:6px 0;border-top:1px solid var(--border);margin-top:4px"><span>Tổng cộng</span><span id="s-total">0 đ</span></div>
+              </div>
+              <div class="form-group" style="margin-top:12px"><label class="form-label">Hình thức thanh toán</label><select class="form-control"><option>Công nợ 30 ngày</option><option>Công nợ 7 ngày</option><option>Tiền mặt</option></select></div>
+              <div class="form-group"><label class="form-label">Kho xuất hàng</label><select class="form-control"><option>Kho HCM – Quận 12</option><option>Kho HCM – Bình Dương</option><option>Kho Hà Nội</option><option>Kho Đà Nẵng</option></select></div>
+              <div class="form-group"><label class="form-label">Ghi chú giao hàng</label><input type="text" class="form-control" placeholder="Yêu cầu đặc biệt..."></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn" style="flex:1"><i class="ti ti-device-floppy"></i>Lưu nháp</button>
+                <button class="btn p" style="flex:1" onclick="submitOrder()"><i class="ti ti-send"></i>Gửi duyệt</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ ORDERS + APPROVAL ══════════ -->
+    <div id="page-orders" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Tổng đơn tháng 6</div><div class="stat-val">186</div></div>
+        <div class="stat"><div class="stat-label">Chờ duyệt</div><div class="stat-val a">5</div></div>
+        <div class="stat"><div class="stat-label">Đang xuất kho</div><div class="stat-val b">8</div></div>
+        <div class="stat"><div class="stat-label">Hoàn thành</div><div class="stat-val g">163</div></div>
+      </div>
+      <div class="section-tabs">
+        <div class="section-tab active" onclick="switchSubPage('orders','sp-approve',this)">Chờ duyệt (5)</div>
+        <div class="section-tab" onclick="switchSubPage('orders','sp-export',this)">Xuất hàng (8)</div>
+        <div class="section-tab" onclick="switchSubPage('orders','sp-all',this)">Tất cả đơn hàng</div>
+      </div>
+
+      <div id="sp-approve" class="sub-page active">
+        <div class="alert b"><i class="ti ti-info-circle"></i><div>Quy trình duyệt: Sale tạo đơn → <b>Quản lý Sale duyệt</b> → Kế toán kiểm tra công nợ → Kho xác nhận xuất hàng</div></div>
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-clock" style="font-size:15px;color:var(--or)"></i><span class="card-title">Đơn hàng chờ duyệt</span></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Giá trị</th><th>Sale</th><th>Thời gian chờ</th><th>Kiểm tra CN</th><th>Hành động</th></tr></thead>
+            <tbody id="approve-table">
+              <tr id="row-DH0642"><td style="font-weight:600;color:var(--blue)">#DH0642</td><td><b>CH Vân – Cần Thơ</b><div style="font-size:11px;color:var(--muted)">Bình xịt × 20, Đầu xịt × 30</div></td><td style="font-weight:600">8.342.000 đ</td><td>N.Thành</td><td style="color:var(--or)">45 phút</td><td><span class="badge g">✓ Đủ hạn mức</span></td><td><div style="display:flex;gap:6px"><button class="btn p" style="padding:4px 10px;font-size:11.5px" onclick="approveRow('DH0642','approve')">✓ Duyệt</button><button class="btn r" style="padding:4px 10px;font-size:11.5px" onclick="approveRow('DH0642','reject')">✗ Từ chối</button><button class="btn" style="padding:4px 8px" onclick="openDp('dp-order')"><i class="ti ti-eye"></i></button></div></td></tr>
+              <tr id="row-DH0641"><td style="font-weight:600;color:var(--blue)">#DH0641</td><td><b>CH Lâm Đồng</b><div style="font-size:11px;color:var(--muted)">Máy cắt cỏ TL-33N × 5</div></td><td style="font-weight:600">12.500.000 đ</td><td>N.Thành</td><td style="color:var(--or)">32 phút</td><td><span class="badge g">✓ Đủ hạn mức</span></td><td><div style="display:flex;gap:6px"><button class="btn p" style="padding:4px 10px;font-size:11.5px" onclick="approveRow('DH0641','approve')">✓ Duyệt</button><button class="btn r" style="padding:4px 10px;font-size:11.5px" onclick="approveRow('DH0641','reject')">✗ Từ chối</button></div></td></tr>
+              <tr id="row-DH0640"><td style="font-weight:600;color:var(--blue)">#DH0640</td><td><b>CH Đắk Lắk</b><div style="font-size:11px;color:var(--muted)">Dây hơi × 50 cuộn</div></td><td style="font-weight:600">6.250.000 đ</td><td>N.Thành</td><td>18 phút</td><td><span class="badge a">⚠ 78% hạn mức</span></td><td><div style="display:flex;gap:6px"><button class="btn p" style="padding:4px 10px;font-size:11.5px" onclick="approveRow('DH0640','approve')">✓ Duyệt</button><button class="btn r" style="padding:4px 10px;font-size:11.5px" onclick="approveRow('DH0640','reject')">✗ Từ chối</button></div></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="sp-export" class="sub-page">
+        <div class="alert g"><i class="ti ti-check"></i><div>Đơn đã duyệt sẽ xuất hiện ở đây. Kho xác nhận xuất hàng → hệ thống tự cập nhật tồn kho và đẩy ngược về ERP.</div></div>
+        <div class="kanban">
+          <div class="kanban-col">
+            <div class="kanban-hd">Đã duyệt – chờ xuất <span class="badge a">3</span></div>
+            <div class="kanban-card" onclick="openDp('dp-order')"><div class="kanban-card-title">#DH0638 · CH Vân</div><div class="kanban-card-sub">Bình xịt × 30 · 7,5tr</div><div style="margin-top:6px"><span class="badge a">Kho HCM</span></div></div>
+            <div class="kanban-card"><div class="kanban-card-title">#DH0637 · CH Vy</div><div class="kanban-card-sub">Máy cắt cỏ × 2 · 5tr</div><div style="margin-top:6px"><span class="badge a">Kho Bình Dương</span></div></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-hd">Đang đóng gói <span class="badge b">2</span></div>
+            <div class="kanban-card"><div class="kanban-card-title">#DH0635 · CH Đức Tiệp</div><div class="kanban-card-sub">Máy phát điện × 2 · 24tr</div><div style="margin-top:6px"><span class="badge b">Kho HN</span></div></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-hd">Đang giao hàng <span class="badge b">3</span></div>
+            <div class="kanban-card"><div class="kanban-card-title">#DH0630 · CH Thanh Huyền</div><div class="kanban-card-sub">Bình xịt × 20 · 5tr</div><div style="margin-top:6px"><span class="badge b">Shipper: SPX</span></div></div>
+            <div class="kanban-card"><div class="kanban-card-title">#DH0628 · CH Sáng Tú</div><div class="kanban-card-sub">Dây hơi × 30 · 3,75tr</div><div style="margin-top:6px"><span class="badge b">Shipper: GHTK</span></div></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-hd">Đã giao – xác nhận <span class="badge g">2</span></div>
+            <div class="kanban-card"><div class="kanban-card-title">#DH0620 · CH Minh Sơn</div><div class="kanban-card-sub">Đầu xịt × 50 · 6tr</div><div style="margin-top:6px"><span class="badge g">✓ KH đã nhận</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sp-all" class="sub-page">
+        <div class="card">
+          <div class="search-bar">
+            <i class="ti ti-search" style="color:var(--muted)"></i>
+            <input type="text" placeholder="Tìm mã đơn, khách hàng...">
+            <span class="chip active">Tất cả</span><span class="chip">Chờ duyệt</span><span class="chip">Đang xuất</span><span class="chip">Hoàn thành</span><span class="chip">Đã hủy</span>
+            <button class="btn b" onclick="exportData('orders')"><i class="ti ti-download"></i>Xuất Excel</button>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày tạo</th><th>Giá trị</th><th>Sale</th><th>Trạng thái</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600;color:var(--blue)">#DH0642</td><td><b>CH Vân – Cần Thơ</b></td><td>09/06 09:45</td><td style="font-weight:600">8.342.000</td><td>N.Thành</td><td><span class="badge a">Chờ duyệt</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#DH0635</td><td><b>CH Đức Tiệp – Q.Ninh</b></td><td>08/06 14:20</td><td style="font-weight:600">24.000.000</td><td>L.Văn C</td><td><span class="badge b">Đang xuất kho</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#DH0628</td><td><b>CH Thanh Huyền – N.An</b></td><td>07/06 11:05</td><td style="font-weight:600">9.000.000</td><td>L.Văn C</td><td><span class="badge g">Hoàn thành</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+              <tr><td style="font-weight:600;color:var(--muted)">#DH0612</td><td><b>CH Phước Lộc – HCM</b></td><td>05/06 09:15</td><td style="font-weight:600">7.500.000</td><td>M.Linh</td><td><span class="badge r">Đã hủy</span></td><td><button class="btn" style="padding:3px 8px"><i class="ti ti-eye"></i></button></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ WARRANTY ══════════ -->
+    <div id="page-warranty" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Đang xử lý BH</div><div class="stat-val b">12</div></div>
+        <div class="stat"><div class="stat-label">Quá hạn phản hồi</div><div class="stat-val r">4</div></div>
+        <div class="stat"><div class="stat-label">Hoàn thành tháng 6</div><div class="stat-val g">28</div></div>
+        <div class="stat"><div class="stat-label">Xuất phụ tùng tháng 6</div><div class="stat-val a">45 lần</div></div>
+      </div>
+      <div class="section-tabs">
+        <div class="section-tab active" onclick="switchSubPage('warranty','w-list',this)">Phiếu bảo hành</div>
+        <div class="section-tab" onclick="switchSubPage('warranty','w-parts',this)">Xuất nhập phụ tùng</div>
+        <div class="section-tab" onclick="switchSubPage('warranty','w-return',this)">Trả bảo hành</div>
+      </div>
+
+      <div id="w-list" class="sub-page active">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-tool" style="font-size:15px;color:var(--blue)"></i><span class="card-title">Danh sách phiếu bảo hành</span><div class="card-act"><button class="btn p" onclick="openModal('mo-warranty')"><i class="ti ti-plus"></i>Tạo phiếu BH</button></div></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Mã BH</th><th>Khách hàng</th><th>Sản phẩm</th><th>Lỗi mô tả</th><th>Ngày tiếp nhận</th><th>Hạn xử lý</th><th>Kỹ thuật viên</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr onclick="openDp('dp-warranty')" style="cursor:pointer"><td style="font-weight:600;color:var(--blue)">#BH0145</td><td><b>CH Vân – Cần Thơ</b></td><td style="font-size:11.5px">Bình xịt TL-20BD</td><td style="font-size:11.5px">Mô tơ rung, không phun đều</td><td>05/06</td><td style="color:var(--red)">10/06 ⚠</td><td>Trần Kỹ</td><td><span class="badge a">Đang sửa</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0144</td><td><b>CH Vy – Đắk Lắk</b></td><td style="font-size:11.5px">Máy cắt cỏ TL-33N</td><td style="font-size:11.5px">Động cơ chết máy giữa chừng</td><td>04/06</td><td style="color:var(--red)">09/06 ⚠</td><td>Nguyễn KT</td><td><span class="badge r">Quá hạn</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0143</td><td><b>CH Đức Tiệp – Q.Ninh</b></td><td style="font-size:11.5px">Máy phát điện Vinafarm 5Kw</td><td style="font-size:11.5px">Không tự khởi động</td><td>03/06</td><td>15/06</td><td>Lê KT</td><td><span class="badge b">Đang chờ phụ tùng</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0142</td><td><b>CH Thanh Huyền – N.An</b></td><td style="font-size:11.5px">Bình xịt Bunny 16L</td><td style="font-size:11.5px">Rò rỉ van đóng mở</td><td>01/06</td><td>12/06</td><td>Trần KT</td><td><span class="badge g">Đã sửa xong</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0141</td><td><b>CH Sáng Tú – Lâm Đồng</b></td><td style="font-size:11.5px">Đầu xịt Yataka CS-29</td><td style="font-size:11.5px">Áp suất giảm bất thường</td><td>28/05</td><td>05/06</td><td>Nguyễn KT</td><td><span class="badge t">Đã trả KH</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div id="w-parts" class="sub-page">
+        <div class="two-col">
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-package" style="font-size:15px;color:var(--g)"></i><span class="card-title">Xuất phụ tùng cho bảo hành</span><div class="card-act"><button class="btn p" onclick="openModal('mo-parts')"><i class="ti ti-plus"></i>Xuất phụ tùng</button></div></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>Mã PT</th><th>Tên phụ tùng</th><th>Phiếu BH</th><th>SL xuất</th><th>Ngày xuất</th><th>KTV nhận</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--blue);font-weight:600">#PT0089</td><td>Mô tơ bơm TL-20 series</td><td>#BH0145</td><td>1</td><td>06/06</td><td>Trần Kỹ</td></tr>
+                <tr><td style="color:var(--blue);font-weight:600">#PT0088</td><td>Cuộn dây khởi động Vinafarm</td><td>#BH0143</td><td>1</td><td>05/06</td><td>Lê KT</td></tr>
+                <tr><td style="color:var(--blue);font-weight:600">#PT0087</td><td>Van đóng mở Bunny 16L</td><td>#BH0142</td><td>2</td><td>03/06</td><td>Trần KT</td></tr>
+                <tr><td style="color:var(--blue);font-weight:600">#PT0086</td><td>Piston áp suất Yataka</td><td>#BH0141</td><td>1</td><td>29/05</td><td>Nguyễn KT</td></tr>
+              </tbody></table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-archive" style="font-size:15px;color:var(--amber)"></i><span class="card-title">Tồn kho phụ tùng bảo hành</span></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>Phụ tùng</th><th>Tồn kho</th><th>Đang dùng</th><th>Cảnh báo</th></tr></thead>
+              <tbody>
+                <tr><td>Mô tơ bơm TL-20 series</td><td style="font-weight:600">8</td><td>3</td><td><span class="badge g">Đủ</span></td></tr>
+                <tr><td>Van đóng mở Bunny 16L</td><td style="font-weight:600;color:var(--or)">2</td><td>2</td><td><span class="badge a">Sắp hết</span></td></tr>
+                <tr><td>Cuộn dây khởi động Vinafarm</td><td style="font-weight:600;color:var(--red)">0</td><td>1</td><td><span class="badge r">Hết hàng</span></td></tr>
+                <tr><td>Piston áp suất Yataka</td><td style="font-weight:600">5</td><td>1</td><td><span class="badge g">Đủ</span></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="w-return" class="sub-page">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-arrow-back-up" style="font-size:15px;color:var(--teal)"></i><span class="card-title">Trả hàng bảo hành cho khách</span><div class="card-act"><button class="btn p" onclick="openModal('mo-return')"><i class="ti ti-plus"></i>Tạo phiếu trả</button></div></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Mã BH</th><th>Khách hàng</th><th>Sản phẩm</th><th>Kết quả BH</th><th>Ngày trả</th><th>Người trả</th><th>Xác nhận KH</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0142</td><td><b>CH Thanh Huyền</b></td><td style="font-size:11.5px">Bình xịt Bunny 16L</td><td><span class="badge g">Sửa xong – bảo hành</span></td><td>09/06</td><td>Trần KT</td><td><button class="btn p" style="padding:3px 10px;font-size:11.5px">Xác nhận đã trả</button></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0141</td><td><b>CH Sáng Tú</b></td><td style="font-size:11.5px">Đầu xịt Yataka CS-29</td><td><span class="badge b">Đổi mới – hết BH lỗi</span></td><td>07/06</td><td>Nguyễn KT</td><td><span class="badge g">✓ KH đã xác nhận</span></td></tr>
+              <tr><td style="font-weight:600;color:var(--blue)">#BH0138</td><td><b>CH Đức Tiệp</b></td><td style="font-size:11.5px">Máy phát điện Mitsuyama</td><td><span class="badge r">Từ chối BH – lỗi người dùng</span></td><td>02/06</td><td>Lê KT</td><td><span class="badge g">✓ KH đã xác nhận</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ DEBT ══════════ -->
+    <div id="page-debt" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Tổng công nợ CN HCM</div><div class="stat-val a">4,23 tỷ</div></div>
+        <div class="stat"><div class="stat-label">Quá hạn 60 ngày</div><div class="stat-val r">2 KH · 57tr</div></div>
+        <div class="stat"><div class="stat-label">Vượt hạn mức</div><div class="stat-val r">3 KH</div></div>
+        <div class="stat"><div class="stat-label">Đến hạn trong 7 ngày</div><div class="stat-val a">8 KH · 320tr</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><i class="ti ti-credit-card" style="font-size:15px;color:var(--or)"></i><span class="card-title">Danh sách công nợ</span><div class="card-act"><button class="btn b" onclick="exportData('debt')"><i class="ti ti-download"></i>Xuất Excel</button></div></div>
+        <div class="tbl-wrap">
+          <table><thead><tr><th>Khách hàng</th><th>Loại</th><th>Hạn mức</th><th>Dư nợ</th><th>% Đã dùng</th><th>Hạn TT</th><th>Tình trạng</th></tr></thead>
+          <tbody>
+            <tr><td><b>CH Thảo – Phước Lộc, HCM</b></td><td><span class="badge gr">Cấp 2</span></td><td>50tr</td><td style="color:var(--red);font-weight:600">28,5tr</td><td><div style="font-size:11px;font-weight:600;color:var(--red)">57% – Quá hạn 65 ngày!</div><div class="prog"><div class="prog-f r" style="width:57%"></div></div></td><td style="color:var(--red)">05/04</td><td><span class="badge r">Cấm bán</span></td></tr>
+            <tr><td><b>CH Chiêu Ly – Minh Sơn</b></td><td><span class="badge p">NPP</span></td><td>80tr</td><td style="color:var(--or);font-weight:600">78tr</td><td><div style="font-size:11px;font-weight:600;color:var(--or)">97%</div><div class="prog"><div class="prog-f a" style="width:97%"></div></div></td><td style="color:var(--or)">12/06</td><td><span class="badge a">Gần hạn mức</span></td></tr>
+            <tr><td><b>CH Vân – Tân Tiến, CT</b></td><td><span class="badge b">Cấp 1</span></td><td>100tr</td><td style="color:var(--g);font-weight:600">35,2tr</td><td><div style="font-size:11px;font-weight:600;color:var(--g)">35%</div><div class="prog"><div class="prog-f g" style="width:35%"></div></div></td><td>30/06</td><td><span class="badge g">Bình thường</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PROGRAMS ══════════ -->
+    <div id="page-programs" class="page">
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-tag" style="font-size:15px;color:var(--g)"></i><span class="card-title">Bảng giá & Chiết khấu (CK-01)</span></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Đối tượng</th><th>Sản phẩm</th><th>% CK</th><th>TT</th></tr></thead>
+            <tbody>
+              <tr><td>Đại lý Cấp 1</td><td>Máy cắt cỏ Mitsuyama</td><td style="color:var(--g);font-weight:600">5%</td><td><span class="badge g">Đang áp</span></td></tr>
+              <tr><td>NPP toàn quốc</td><td>Tất cả bình xịt điện</td><td style="color:var(--g);font-weight:600">3%</td><td><span class="badge g">Đang áp</span></td></tr>
+              <tr><td>KH VIP</td><td>Tất cả sản phẩm</td><td style="color:var(--g);font-weight:600">7%</td><td><span class="badge g">Đang áp</span></td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-gift" style="font-size:15px;color:var(--or)"></i><span class="card-title">Chương trình khuyến mãi (CK-02)</span><div class="card-act"><button class="btn p"><i class="ti ti-plus"></i>Tạo CT</button></div></div>
+          <div class="card-body">
+            <div style="border:1px solid var(--gl2);border-radius:var(--r8);padding:12px;background:var(--gl);margin-bottom:10px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><b style="color:#27500A">KM Tháng 6 – Bình xịt điện</b><span class="badge g">Đang chạy</span></div>
+              <div style="font-size:12px;color:#3B6D11">Mua ≥10 bình → CK thêm 3% tổng đơn</div>
+              <div style="margin-top:8px"><div class="prog" style="height:6px"><div class="prog-f g" style="width:62%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px">1,24 tỷ / 2 tỷ mục tiêu</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ KPI ══════════ -->
+    <div id="page-kpi" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">KPI tháng 6 – CN HCM</div><div class="stat-val g">82%</div></div>
+        <div class="stat"><div class="stat-label">Doanh số đạt</div><div class="stat-val">1,84 tỷ</div></div>
+        <div class="stat"><div class="stat-label">Còn lại</div><div class="stat-val a">0,41 tỷ</div></div>
+        <div class="stat"><div class="stat-label">Sale đạt ≥70% KPI</div><div class="stat-val g">4/6</div></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-chart-bar" style="font-size:15px;color:var(--g)"></i><span class="card-title">KPI từng Sale – T6/2025</span><div class="card-act"><button class="btn b" onclick="exportData('kpi')"><i class="ti ti-download"></i>Xuất</button></div></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Sale</th><th>CN</th><th>Mục tiêu</th><th>Đạt</th><th>KPI</th><th>Thăm viếng</th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av g">NT</div>Nguyễn Thành</div></td><td>HCM</td><td>720tr</td><td style="color:var(--g);font-weight:600">680tr</td><td><span style="color:var(--g);font-weight:600">94%</span><div class="prog"><div class="prog-f g" style="width:94%"></div></div></td><td>32/40</td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av b">ML</div>Mai Linh</div></td><td>HCM</td><td>660tr</td><td style="color:var(--g);font-weight:600">540tr</td><td><span style="color:var(--g);font-weight:600">82%</span><div class="prog"><div class="prog-f g" style="width:82%"></div></div></td><td>28/40</td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av a">TH</div>Trung Hiếu</div></td><td>HN</td><td>630tr</td><td style="color:var(--amber);font-weight:600">385tr</td><td><span style="color:var(--amber);font-weight:600">61%</span><div class="prog"><div class="prog-f a" style="width:61%"></div></div></td><td>20/40</td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:7px"><div class="av r">NB</div>Nguyễn Bảo</div></td><td>ĐN</td><td>550tr</td><td style="color:var(--red);font-weight:600">230tr</td><td><span style="color:var(--red);font-weight:600">42%</span><div class="prog"><div class="prog-f r" style="width:42%"></div></div></td><td>15/40</td></tr>
+            </tbody></table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-settings" style="font-size:15px"></i><span class="card-title">Thiết lập KPI tháng 7</span></div>
+          <div class="card-body">
+            <div class="form-group"><label class="form-label">Sale</label><select class="form-control"><option>Nguyễn Thành</option><option>Mai Linh</option><option>Trung Hiếu</option></select></div>
+            <div class="form-group"><label class="form-label">Mục tiêu doanh số (đ)</label><input type="text" class="form-control" value="750000000"></div>
+            <div class="form-group"><label class="form-label">Mục tiêu thăm viếng (lượt)</label><input type="number" class="form-control" value="45"></div>
+            <div class="form-group"><label class="form-label">Mục tiêu đơn hàng</label><input type="number" class="form-control" value="80"></div>
+            <button class="btn p" style="width:100%"><i class="ti ti-check"></i>Lưu KPI tháng 7</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ REPORTS ══════════ -->
+    <div id="page-reports" class="page">
+      <div class="section-tabs">
+        <div class="section-tab active" onclick="switchSubPage('reports','r-sales',this)">Doanh số</div>
+        <div class="section-tab" onclick="switchSubPage('reports','r-customer',this)">Khách hàng</div>
+        <div class="section-tab" onclick="switchSubPage('reports','r-debt',this)">Công nợ</div>
+        <div class="section-tab" onclick="switchSubPage('reports','r-warranty',this)">Bảo hành</div>
+        <div class="section-tab" onclick="switchSubPage('reports','r-kpi',this)">KPI</div>
+      </div>
+      <div id="r-sales" class="sub-page active">
+        <div class="card">
+          <div class="card-hd"><i class="ti ti-chart-bar" style="font-size:15px;color:var(--g)"></i><span class="card-title">Báo cáo doanh số</span>
+            <div class="card-act">
+              <select class="form-control" style="width:auto;padding:5px 10px"><option>Tháng 6/2025</option><option>Tháng 5/2025</option><option>Q2/2025</option></select>
+              <select class="form-control" style="width:auto;padding:5px 10px"><option>Tất cả chi nhánh</option><option>HCM</option><option>Hà Nội</option><option>Đà Nẵng</option></select>
+              <button class="btn b" onclick="exportData('sales')"><i class="ti ti-file-spreadsheet"></i>Xuất Excel</button>
+              <button class="btn" onclick="exportData('sales-pdf')"><i class="ti ti-file-type-pdf"></i>Xuất PDF</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="stats-row" style="margin-bottom:12px">
+              <div class="stat"><div class="stat-label">Tổng doanh số</div><div class="stat-val g">1,84 tỷ</div><div class="stat-trend up">↑ 12% vs tháng 5</div></div>
+              <div class="stat"><div class="stat-label">Số đơn hàng</div><div class="stat-val">186</div></div>
+              <div class="stat"><div class="stat-label">Giá trị TB/đơn</div><div class="stat-val">9,9tr</div></div>
+              <div class="stat"><div class="stat-label">Khách hàng mua</div><div class="stat-val">58 KH</div></div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:5px;height:80px;padding:0 4px" id="r-bars"></div>
+            <div style="display:flex;gap:5px;margin-top:5px" id="r-labels"></div>
+          </div>
+        </div>
+        <div class="three-col">
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Top sản phẩm bán chạy</span></div>
+            <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Sản phẩm</th><th>SL</th><th>Doanh số</th></tr></thead>
+            <tbody>
+              <tr><td><b style="color:var(--or)">#1</b></td><td style="font-size:11.5px">Bình xịt Mitsuyama TL-20BD</td><td>420</td><td style="font-weight:600">105tr</td></tr>
+              <tr><td><b style="color:var(--muted)">#2</b></td><td style="font-size:11.5px">Dây hơi Mitsuyama 8.5mm</td><td>680</td><td style="font-weight:600">85tr</td></tr>
+              <tr><td><b style="color:var(--muted)">#3</b></td><td style="font-size:11.5px">Máy cắt cỏ TL-33N</td><td>38</td><td style="font-weight:600">95tr</td></tr>
+              <tr><td><b style="color:var(--muted)">#4</b></td><td style="font-size:11.5px">Đầu xịt Yataka CS-29</td><td>1240</td><td style="font-weight:600">149tr</td></tr>
+            </tbody></table></div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Doanh số theo chi nhánh</span></div>
+            <div class="card-body">
+              <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>TP.HCM</span><span style="font-weight:600;color:var(--g)">1,22 tỷ · 66%</span></div><div class="prog" style="height:8px"><div class="prog-f g" style="width:66%"></div></div></div>
+              <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>Hà Nội</span><span style="font-weight:600;color:var(--amber)">470tr · 26%</span></div><div class="prog" style="height:8px"><div class="prog-f a" style="width:26%"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>Đà Nẵng</span><span style="font-weight:600;color:var(--blue)">148tr · 8%</span></div><div class="prog" style="height:8px"><div class="prog-f b" style="width:8%"></div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Doanh số theo kênh</span></div>
+            <div class="card-body">
+              <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>Đại lý Cấp 1</span><span style="font-weight:600;color:var(--g)">920tr · 50%</span></div><div class="prog" style="height:8px"><div class="prog-f g" style="width:50%"></div></div></div>
+              <div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>NPP</span><span style="font-weight:600;color:var(--blue)">552tr · 30%</span></div><div class="prog" style="height:8px"><div class="prog-f b" style="width:30%"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px"><span>Cấp 2 + 3</span><span style="font-weight:600;color:var(--amber)">368tr · 20%</span></div><div class="prog" style="height:8px"><div class="prog-f a" style="width:20%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="r-customer" class="sub-page">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Báo cáo khách hàng</span><div class="card-act"><button class="btn b" onclick="exportData('customers')"><i class="ti ti-download"></i>Xuất Excel</button></div></div>
+          <div class="tbl-wrap"><table><thead><tr><th>Khách hàng</th><th>Loại</th><th>Tổng đơn T6</th><th>Doanh số T6</th><th>Tổng năm</th><th>Lần mua gần nhất</th></tr></thead>
+          <tbody>
+            <tr><td><b>CH Vân – Tân Tiến</b></td><td><span class="badge b">Cấp 1</span></td><td>4</td><td style="font-weight:600;color:var(--g)">32tr</td><td style="font-weight:600">285tr</td><td>09/06</td></tr>
+            <tr><td><b>CH Vy – Châu Mai Tý</b></td><td><span class="badge b">Cấp 1</span></td><td>3</td><td style="font-weight:600;color:var(--g)">24tr</td><td style="font-weight:600">210tr</td><td>09/06</td></tr>
+            <tr><td><b>CH Đức Tiệp – Q.Ninh</b></td><td><span class="badge b">Cấp 1</span></td><td>2</td><td style="font-weight:600;color:var(--g)">34tr</td><td style="font-weight:600">198tr</td><td>08/06</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div id="r-debt" class="sub-page">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Báo cáo công nợ</span><div class="card-act"><button class="btn b" onclick="exportData('debt-report')"><i class="ti ti-download"></i>Xuất Excel</button></div></div>
+          <div class="card-body"><div class="alert b"><i class="ti ti-info-circle"></i><div>Dùng cho họp team tuần / tháng. Xuất Excel để trình bày BGĐ.</div></div></div>
+        </div>
+      </div>
+      <div id="r-warranty" class="sub-page">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Báo cáo bảo hành</span><div class="card-act"><button class="btn b" onclick="exportData('warranty-report')"><i class="ti ti-download"></i>Xuất Excel</button></div></div>
+          <div class="tbl-wrap"><table><thead><tr><th>Tháng</th><th>Tiếp nhận</th><th>Hoàn thành</th><th>Đang xử lý</th><th>Tỉ lệ đúng hạn</th></tr></thead>
+          <tbody>
+            <tr><td><b>T6/2025</b></td><td>16</td><td>8</td><td>8</td><td style="color:var(--g);font-weight:600">75%</td></tr>
+            <tr><td>T5/2025</td><td>22</td><td>20</td><td>2</td><td style="color:var(--g);font-weight:600">91%</td></tr>
+            <tr><td>T4/2025</td><td>18</td><td>18</td><td>0</td><td style="color:var(--g);font-weight:600">94%</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div id="r-kpi" class="sub-page">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">Báo cáo KPI</span><div class="card-act"><button class="btn b" onclick="exportData('kpi-report')"><i class="ti ti-download"></i>Xuất Excel</button><button class="btn" onclick="exportData('kpi-pdf')"><i class="ti ti-file-type-pdf"></i>Xuất PDF</button></div></div>
+          <div class="card-body"><div class="alert g"><i class="ti ti-check"></i><div>Báo cáo KPI tổng hợp theo tuần/tháng phục vụ họp team và lên kế hoạch tháng tiếp theo.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ INTEGRATION ══════════ -->
+    <div id="page-integration" class="page">
+      <div class="stats-row">
+        <div class="stat"><div class="stat-label">Kết nối đang hoạt động</div><div class="stat-val g">2/3</div></div>
+        <div class="stat"><div class="stat-label">Đồng bộ lần cuối</div><div class="stat-val b">08:30</div></div>
+        <div class="stat"><div class="stat-label">Bản ghi đồng bộ hôm nay</div><div class="stat-val">1.248</div></div>
+        <div class="stat"><div class="stat-label">Lỗi đồng bộ</div><div class="stat-val r">3</div></div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-plug" style="font-size:15px;color:var(--g)"></i><span class="card-title">Kết nối ERP / Hệ thống hiện có</span></div>
+            <div class="card-body">
+              <div class="integration-box">
+                <div class="int-icon" style="background:var(--gl)">🏭</div>
+                <div><div style="font-weight:600;font-size:13px">ERP Hiện tại (Phần mềm nội bộ)</div><div style="font-size:11.5px;color:var(--muted)">Đồng bộ KH, đơn hàng, tồn kho, công nợ 2 chiều</div></div>
+                <div class="int-status"><div class="dot-live"></div><span class="badge g">Đang kết nối</span><button class="btn" style="padding:4px 10px;font-size:11.5px">Cấu hình</button></div>
+              </div>
+              <div class="integration-box">
+                <div class="int-icon" style="background:var(--bluel)">📊</div>
+                <div><div style="font-weight:600;font-size:13px">Phần mềm Kế toán</div><div style="font-size:11.5px;color:var(--muted)">Lấy dữ liệu công nợ, thanh toán realtime</div></div>
+                <div class="int-status"><div class="dot-live"></div><span class="badge g">Đang kết nối</span><button class="btn" style="padding:4px 10px;font-size:11.5px">Cấu hình</button></div>
+              </div>
+              <div class="integration-box">
+                <div class="int-icon" style="background:var(--amberl)">📦</div>
+                <div><div style="font-weight:600;font-size:13px">Hệ thống Kho (WMS)</div><div style="font-size:11.5px;color:var(--muted)">Kiểm tra tồn kho, xác nhận xuất hàng</div></div>
+                <div class="int-status"><div class="dot-off"></div><span class="badge gr">Chưa kết nối</span><button class="btn p" style="padding:4px 10px;font-size:11.5px">Kết nối</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-refresh" style="font-size:15px;color:var(--blue)"></i><span class="card-title">Cấu hình đồng bộ dữ liệu</span></div>
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">Tần suất đồng bộ</label><select class="form-control"><option>Realtime (webhook)</option><option>Mỗi 5 phút</option><option>Mỗi 15 phút</option><option>Mỗi giờ</option></select></div>
+              <div class="form-group"><label class="form-label">Chiều đồng bộ</label><select class="form-control"><option>2 chiều (lấy & đẩy)</option><option>Chỉ lấy dữ liệu về</option><option>Chỉ đẩy dữ liệu lên</option></select></div>
+              <div class="form-group"><label class="form-label">API Endpoint ERP</label><input type="text" class="form-control" value="https://erp.thienhoangnguyen.vn/api/v1"></div>
+              <div style="display:flex;gap:8px">
+                <button class="btn b" style="flex:1"><i class="ti ti-refresh"></i>Đồng bộ ngay</button>
+                <button class="btn p" style="flex:1"><i class="ti ti-device-floppy"></i>Lưu cấu hình</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-list" style="font-size:15px"></i><span class="card-title">Dữ liệu đồng bộ 2 chiều</span></div>
+            <div class="tbl-wrap">
+              <table><thead><tr><th>Dữ liệu</th><th>Chiều</th><th>Lần cuối</th><th>Trạng thái</th></tr></thead>
+              <tbody>
+                <tr><td>Danh mục KH</td><td style="font-size:11.5px">THN Sales ↔ ERP</td><td style="font-size:11px;color:var(--muted)">08:30 hôm nay</td><td><span class="badge g">✓ Thành công</span></td></tr>
+                <tr><td>Đơn hàng đã duyệt</td><td style="font-size:11.5px">THN Sales → ERP</td><td style="font-size:11px;color:var(--muted)">08:30 hôm nay</td><td><span class="badge g">✓ Thành công</span></td></tr>
+                <tr><td>Công nợ KH</td><td style="font-size:11.5px">ERP → THN Sales</td><td style="font-size:11px;color:var(--muted)">08:30 hôm nay</td><td><span class="badge g">✓ Thành công</span></td></tr>
+                <tr><td>Tồn kho sản phẩm</td><td style="font-size:11.5px">WMS → THN Sales</td><td style="font-size:11px;color:var(--muted)">Chưa kết nối</td><td><span class="badge r">✗ Lỗi kết nối</span></td></tr>
+                <tr><td>Bảng giá & CK</td><td style="font-size:11.5px">ERP → THN Sales</td><td style="font-size:11px;color:var(--muted)">06:00 hôm nay</td><td><span class="badge g">✓ Thành công</span></td></tr>
+                <tr><td>Phiếu bảo hành</td><td style="font-size:11.5px">THN Sales → ERP</td><td style="font-size:11px;color:var(--muted)">08:15 hôm nay</td><td><span class="badge a">⚠ 3 bản ghi lỗi</span></td></tr>
+              </tbody></table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><i class="ti ti-history" style="font-size:15px"></i><span class="card-title">Log đồng bộ gần nhất</span></div>
+            <div class="card-body" style="padding:10px 14px">
+              <div class="tl-item"><div class="tl-dot g"></div><div class="tl-body"><div class="tl-ttl">Đồng bộ thành công – 1.245 bản ghi KH</div><div class="tl-meta">08:30 hôm nay · ERP ↔ THN Sales</div></div></div>
+              <div class="tl-item"><div class="tl-dot g"></div><div class="tl-body"><div class="tl-ttl">Đẩy 8 đơn hàng đã duyệt lên ERP</div><div class="tl-meta">08:30 hôm nay</div></div></div>
+              <div class="tl-item"><div class="tl-dot a"></div><div class="tl-body"><div class="tl-ttl">Lỗi 3 phiếu BH – thiếu trường mã kho</div><div class="tl-meta">08:15 hôm nay · Cần kiểm tra</div></div></div>
+              <div class="tl-item"><div class="tl-dot g"></div><div class="tl-body"><div class="tl-ttl">Cập nhật bảng giá tháng 6</div><div class="tl-meta">06:00 hôm nay · 1.240 sản phẩm</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAIL PANELS -->
+<div class="dp" id="dp-customer">
+  <div class="dp-hd">
+    <div class="av g" style="width:36px;height:36px;font-size:13px">VT</div>
+    <div><div style="font-weight:600;font-size:14px">CH Vân – Tân Tiến, Cần Thơ</div><div style="font-size:11px;color:var(--muted)">Đại lý Cấp 1 · VIP</div></div>
+    <button class="dp-close" onclick="closeDp('dp-customer')">✕</button>
+  </div>
+  <div class="dp-body">
+    <div style="display:flex;gap:6px;margin-bottom:12px"><span class="badge g">VIP ★</span><span class="badge b">Cấp 1</span><span class="badge g">Luôn được bán</span></div>
+    <div class="dp-sec"><div class="dp-sec-title">Thông tin</div>
+      <div class="dp-row"><span class="dp-k">Điện thoại</span><span class="dp-v">0901 234 567</span></div>
+      <div class="dp-row"><span class="dp-k">Sale phụ trách</span><span class="dp-v">Nguyễn Thành</span></div>
+      <div class="dp-row"><span class="dp-k">Hạn thanh toán</span><span class="dp-v">30 ngày</span></div>
+    </div>
+    <div class="dp-sec"><div class="dp-sec-title">Công nợ</div>
+      <div class="dp-row"><span class="dp-k">Hạn mức</span><span class="dp-v">100.000.000 đ</span></div>
+      <div class="dp-row"><span class="dp-k">Dư nợ</span><span class="dp-v" style="color:var(--g)">35.200.000 đ</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn p" style="flex:1" onclick="nav('neworder',null)"><i class="ti ti-shopping-cart"></i>Tạo đơn</button>
+      <button class="btn" style="flex:1"><i class="ti ti-edit"></i>Chỉnh sửa</button>
+    </div>
+  </div>
+</div>
+
+<div class="dp" id="dp-order">
+  <div class="dp-hd">
+    <div><div style="font-weight:600;font-size:14px">#DH0642</div><div style="font-size:11px;color:var(--muted)">CH Vân – Tân Tiến, Cần Thơ</div></div>
+    <button class="dp-close" onclick="closeDp('dp-order')">✕</button>
+  </div>
+  <div class="dp-body">
+    <div class="dp-sec"><div class="dp-sec-title">Chi tiết đơn hàng</div>
+      <div class="dp-row"><span class="dp-k">Ngày tạo</span><span class="dp-v">09/06/2025 09:45</span></div>
+      <div class="dp-row"><span class="dp-k">Sale</span><span class="dp-v">Nguyễn Thành</span></div>
+      <div class="dp-row"><span class="dp-k">Kho xuất</span><span class="dp-v">Kho HCM – Quận 12</span></div>
+      <div class="dp-row"><span class="dp-k">Trạng thái</span><span class="dp-v"><span class="badge a">Chờ duyệt</span></span></div>
+    </div>
+    <div class="dp-sec"><div class="dp-sec-title">Sản phẩm</div>
+      <div class="dp-row"><span class="dp-k">Bình xịt TL-20BD × 20</span><span class="dp-v">5.000.000 đ</span></div>
+      <div class="dp-row"><span class="dp-k">Đầu xịt Yataka CS-29 × 30</span><span class="dp-v">3.600.000 đ</span></div>
+      <div class="dp-row"><span class="dp-k">CK thương mại 3%</span><span class="dp-v" style="color:var(--g)">-258.000 đ</span></div>
+      <div class="dp-row"><span class="dp-k" style="font-weight:600">Tổng cộng</span><span class="dp-v" style="font-weight:700">8.342.000 đ</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn p" style="flex:1" onclick="approveRow('DH0642','approve');closeDp('dp-order')"><i class="ti ti-check"></i>Duyệt</button>
+      <button class="btn r" style="flex:1" onclick="approveRow('DH0642','reject');closeDp('dp-order')"><i class="ti ti-x"></i>Từ chối</button>
+    </div>
+  </div>
+</div>
+
+<div class="dp" id="dp-warranty">
+  <div class="dp-hd">
+    <div><div style="font-weight:600;font-size:14px">#BH0145</div><div style="font-size:11px;color:var(--muted)">CH Vân – Bình xịt TL-20BD</div></div>
+    <button class="dp-close" onclick="closeDp('dp-warranty')">✕</button>
+  </div>
+  <div class="dp-body">
+    <div class="dp-sec"><div class="dp-sec-title">Thông tin bảo hành</div>
+      <div class="dp-row"><span class="dp-k">Ngày tiếp nhận</span><span class="dp-v">05/06/2025</span></div>
+      <div class="dp-row"><span class="dp-k">Hạn xử lý</span><span class="dp-v" style="color:var(--red)">10/06/2025 ⚠</span></div>
+      <div class="dp-row"><span class="dp-k">KTV phụ trách</span><span class="dp-v">Trần Kỹ Thuật</span></div>
+      <div class="dp-row"><span class="dp-k">Mô tả lỗi</span><span class="dp-v">Mô tơ rung, không phun đều</span></div>
+      <div class="dp-row"><span class="dp-k">Phụ tùng thay</span><span class="dp-v">Mô tơ bơm TL-20</span></div>
+      <div class="dp-row"><span class="dp-k">Trạng thái</span><span class="dp-v"><span class="badge a">Đang sửa</span></span></div>
+    </div>
+    <button class="btn p" style="width:100%;margin-top:8px"><i class="ti ti-check"></i>Cập nhật tiến độ</button>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="mo-order">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Đặt hàng nhanh</span><button class="btn" onclick="closeModal('mo-order')" style="padding:4px 8px"><i class="ti ti-x"></i></button></div>
+    <div class="form-group"><label class="form-label">Khách hàng</label><select class="form-control"><option>CH Vân – Cần Thơ (Cấp 1)</option><option>CH Vy – Đắk Lắk (VIP)</option></select></div>
+    <div class="form-group"><label class="form-label">Sản phẩm</label><select class="form-control"><option>Bình xịt TL-20BD</option><option>Đầu xịt Yataka CS-29</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">Số lượng</label><input type="number" class="form-control" value="10"></div>
+      <div class="form-group"><label class="form-label">Kho xuất</label><select class="form-control"><option>Kho HCM</option><option>Kho HN</option></select></div>
+    </div>
+    <div style="background:var(--gl);border-radius:var(--r6);padding:10px;font-size:12.5px;color:#27500A;margin-bottom:12px">Tổng: <b>2.500.000 đ</b> · CK 3%: <b>-75.000 đ</b> · <b>Thực thu: 2.425.000 đ</b></div>
+    <div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="closeModal('mo-order')">Hủy</button><button class="btn p" style="flex:1" onclick="closeModal('mo-order')"><i class="ti ti-send"></i>Gửi duyệt</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="mo-customer">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Thêm khách hàng mới</span><button class="btn" onclick="closeModal('mo-customer')" style="padding:4px 8px"><i class="ti ti-x"></i></button></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">Tên cửa hàng</label><input type="text" class="form-control" placeholder="Tên..."></div>
+      <div class="form-group"><label class="form-label">Người liên hệ</label><input type="text" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Điện thoại</label><input type="text" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Loại KH</label><select class="form-control"><option>Đại lý Cấp 1</option><option>Đại lý Cấp 2</option><option>Đại lý Cấp 3</option><option>NPP</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Khu vực / Tỉnh thành</label><input type="text" class="form-control"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">Hạn mức công nợ (đ)</label><input type="text" class="form-control" placeholder="50000000"></div>
+      <div class="form-group"><label class="form-label">Sale phụ trách</label><select class="form-control"><option>Nguyễn Thành</option><option>Mai Linh</option></select></div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="closeModal('mo-customer')">Hủy</button><button class="btn p" style="flex:1" onclick="closeModal('mo-customer')"><i class="ti ti-check"></i>Thêm KH</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="mo-warranty">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Tạo phiếu bảo hành</span><button class="btn" onclick="closeModal('mo-warranty')" style="padding:4px 8px"><i class="ti ti-x"></i></button></div>
+    <div class="form-group"><label class="form-label">Khách hàng</label><select class="form-control"><option>CH Vân – Cần Thơ</option><option>CH Vy – Đắk Lắk</option></select></div>
+    <div class="form-group"><label class="form-label">Sản phẩm bảo hành</label><input type="text" class="form-control" placeholder="Tên SP, serial..."></div>
+    <div class="form-group"><label class="form-label">Mô tả lỗi</label><textarea class="form-control" rows="3" placeholder="Khách mô tả lỗi..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">Kỹ thuật viên</label><select class="form-control"><option>Trần Kỹ Thuật</option><option>Nguyễn KT</option><option>Lê KT</option></select></div>
+      <div class="form-group"><label class="form-label">Hạn xử lý</label><input type="date" class="form-control"></div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="closeModal('mo-warranty')">Hủy</button><button class="btn p" style="flex:1" onclick="closeModal('mo-warranty')"><i class="ti ti-check"></i>Tạo phiếu BH</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="mo-plan">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Thêm kế hoạch làm việc</span><button class="btn" onclick="closeModal('mo-plan')" style="padding:4px 8px"><i class="ti ti-x"></i></button></div>
+    <div class="form-group"><label class="form-label">Tên hoạt động</label><input type="text" class="form-control" placeholder="Vd: Thăm 10 KH Cấp 1 tại HN..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-group"><label class="form-label">Sale thực hiện</label><select class="form-control"><option>Nguyễn Thành</option><option>Mai Linh</option><option>Trung Hiếu</option></select></div>
+      <div class="form-group"><label class="form-label">Hạn hoàn thành</label><input type="date" class="form-control"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Loại kế hoạch</label><select class="form-control"><option>Thăm viếng thị trường</option><option>Phát triển KH mới</option><option>Thu hồi công nợ</option><option>Demo sản phẩm</option><option>Phát triển kênh</option></select></div>
+    <div class="form-group"><label class="form-label">Mục tiêu (số lượng)</label><input type="number" class="form-control" placeholder="Vd: 10"></div>
+    <div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="closeModal('mo-plan')">Hủy</button><button class="btn p" style="flex:1" onclick="closeModal('mo-plan')"><i class="ti ti-check"></i>Thêm kế hoạch</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="mo-parts">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Xuất phụ tùng bảo hành</span><button class="btn" onclick="closeModal('mo-parts')" style="padding:4px 8px"><i class="ti ti-x"></i></button></div>
+    <div class="form-group"><label class="form-label">Phiếu bảo hành</label><select class="form-control"><option>#BH0145 – Bình xịt TL-20BD</option><option>#BH0143 – Máy phát điện</option></select></div>
+    <div class="form-group"><label class="form-label">Phụ tùng xuất</label><select class="form-control"><option>Mô tơ bơm TL-20 series (tồn: 8)</option><option>Van đóng mở Bunny (tồn: 2)</option></select></div>
+    <div class="form-group"><label class="form-label">Số lượng</label><input type="number" class="form-control" value="1" min="1"></div>
+    <div class="form-group"><label class="form-label">Kỹ thuật viên nhận</label><select class="form-control"><option>Trần Kỹ Thuật</option><option>Nguyễn KT</option></select></div>
+    <div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="closeModal('mo-parts')">Hủy</button><button class="btn p" style="flex:1" onclick="closeModal('mo-parts')"><i class="ti ti-check"></i>Xác nhận xuất</button></div>
+  </div>
+</div>
+<div class="modal-bg" id="mo-return">
+  <div class="modal">
+    <div class="modal-hd"><span class="modal-title">Tạo phiếu trả bảo hành</span><button class="btn" onclick="closeModal('mo-return')" style="padding:4px 8px"><i class="ti ti-x"></i></button></div>
+    <div class="form-group"><label class="form-label">Phiếu bảo hành</label><select class="form-control"><option>#BH0145 – CH Vân</option><option>#BH0142 – CH Thanh Huyền</option></select></div>
+    <div class="form-group"><label class="form-label">Kết quả xử lý</label><select class="form-control"><option>Sửa xong – còn bảo hành</option><option>Đổi mới – hết bảo hành</option><option>Từ chối BH – lỗi người dùng</option></select></div>
+    <div class="form-group"><label class="form-label">Ghi chú kỹ thuật</label><textarea class="form-control" rows="2" placeholder="Đã thay phụ tùng, kiểm tra OK..."></textarea></div>
+    <div style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="closeModal('mo-return')">Hủy</button><button class="btn p" style="flex:1" onclick="closeModal('mo-return')"><i class="ti ti-check"></i>Xác nhận trả hàng</button></div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#1C2B1A;color:#fff;padding:10px 18px;border-radius:var(--r8);font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;gap:8px;pointer-events:none"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.js"></script>
+<script>
+const pagesInfo={
+  'dashboard':['Dashboard','Tổng quan · 09/06/2025'],
+  'customers':['Quản lý khách hàng','247 khách hàng · 3 chi nhánh'],
+  'market':['Chăm sóc thị trường','Lịch thăm viếng & Check-in GPS'],
+  'workplan':['Kế hoạch làm việc','Kế hoạch & tiến độ thực hiện'],
+  'neworder':['Tạo đơn hàng','Đơn hàng mới · Kiểm tra tự động'],
+  'orders':['Quản lý & Duyệt đơn hàng','Duyệt · Xuất hàng · Theo dõi'],
+  'warranty':['Bảo hành & Phụ tùng','Phiếu BH · Xuất PT · Trả hàng'],
+  'debt':['Theo dõi công nợ','Tổng quan công nợ · Chi nhánh HCM'],
+  'programs':['Chương trình bán hàng','Bảng giá · Chiết khấu · KM'],
+  'kpi':['KPI Sale','Hiệu quả bán hàng · T6/2025'],
+  'reports':['Báo cáo & Xuất dữ liệu','Phân tích · Họp team · Lên kế hoạch'],
+  'integration':['Kết nối ERP','Đồng bộ dữ liệu hệ thống hiện có']
+};
+
+function nav(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById('page-'+id);
+  if(p) p.classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const info=pagesInfo[id]||['',''];
+  document.getElementById('tb-title').textContent=info[0];
+  document.getElementById('tb-sub').textContent=info[1];
+  document.querySelectorAll('.dp').forEach(d=>d.classList.remove('open'));
+}
+
+function openDp(id){document.getElementById(id).classList.add('open')}
+function closeDp(id){document.getElementById(id).classList.remove('open')}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function toast(msg,type='g'){
+  const t=document.getElementById('toast');
+  const icon=type==='g'?'✓':type==='r'?'✗':'⚠';
+  t.textContent=icon+' '+msg;
+  t.style.opacity='1';
+  t.style.background=type==='g'?'#1C2B1A':type==='r'?'#7f1d1d':'#78350f';
+  setTimeout(()=>{t.style.opacity='0'},2800);
+}
+
+function approveOrder(btn,code){
+  btn.textContent='✓ Đã duyệt';
+  btn.style.background='var(--g)';
+  btn.disabled=true;
+  toast(code+' đã được duyệt thành công');
+}
+
+function approveRow(id,action){
+  const row=document.getElementById('row-'+id);
+  if(!row) return;
+  if(action==='approve'){
+    row.cells[6].innerHTML='<span class="badge g">✓ Đã duyệt</span>';
+    toast('#'+id+' đã được duyệt – chờ xuất kho');
+  } else {
+    row.cells[6].innerHTML='<span class="badge r">✗ Đã từ chối</span>';
+    toast('#'+id+' đã bị từ chối','r');
+  }
+  setTimeout(()=>{row.style.opacity='.4'},300);
+}
+
+function submitOrder(){
+  toast('Đơn hàng đã gửi duyệt thành công');
+}
+
+function exportData(type){
+  const labels={'orders':'đơn hàng','sales':'doanh số','debt':'công nợ','debt-report':'công nợ','customers':'khách hàng','kpi':'KPI','kpi-report':'KPI','warranty-report':'bảo hành','sales-pdf':'doanh số (PDF)','kpi-pdf':'KPI (PDF)'};
+  const label=labels[type]||type;
+  toast('Đang xuất dữ liệu '+label+'... (demo)');
+}
+
+function checkCustomer(sel){
+  const v=sel.value;
+  const box=document.getElementById('cust-info');
+  if(!v){box.style.display='none';return;}
+  box.style.display='block';
+  if(v==='ok') box.innerHTML='<div class="alert g"><i class="ti ti-check"></i><div>KH hợp lệ · Dư nợ 35,2/100tr · Giá VIP · Hạn TT 30 ngày</div></div>';
+  else if(v==='warn') box.innerHTML='<div class="alert a"><i class="ti ti-alert-circle"></i><div>Cảnh báo: Công nợ 97% hạn mức (78/80tr). Đơn mới có thể bị từ chối nếu vượt hạn mức.</div></div>';
+  else box.innerHTML='<div class="alert r"><i class="ti ti-x-circle"></i><div>Khách hàng bị CẤM BÁN – Nợ quá hạn 65 ngày. Không được tạo đơn.</div></div>';
+}
+
+const prods={
+  'bx20':{name:'Bình xịt Mitsuyama TL-20BD',price:250000},
+  'dx29':{name:'Đầu xịt Yataka CS-29',price:120000},
+  'mcc33':{name:'Máy cắt cỏ TL-33N',price:2500000},
+  'dh85':{name:'Dây hơi 8.5mm×50m',price:125000}
+};
+let lines=[];
+
+function addLine(){
+  const s=document.getElementById('prod-sel').value;
+  const q=parseInt(document.getElementById('qty-i').value)||1;
+  if(!s) return;
+  const ex=lines.find(l=>l.k===s);
+  if(ex) ex.q+=q; else lines.push({k:s,name:prods[s].name,price:prods[s].price,q});
+  renderLines();
+}
+
+function removeLine(i){lines.splice(i,1);renderLines();}
+
+function renderLines(){
+  const ol=document.getElementById('order-lines');
+  const sl=document.getElementById('sum-lines');
+  if(!lines.length){
+    ol.innerHTML='<div style="color:var(--hint);font-size:12px;text-align:center;padding:20px">Chưa có sản phẩm</div>';
+    sl.innerHTML='<div style="color:var(--hint);font-size:12px">Chưa có sản phẩm</div>';
+    ['s-before','s-ck1','s-total'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='0 đ';});
+    return;
+  }
+  let html='<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="background:var(--bg);padding:5px 8px;text-align:left;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)">Sản phẩm</th><th style="background:var(--bg);padding:5px 8px;text-align:center;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)">SL</th><th style="background:var(--bg);padding:5px 8px;text-align:right;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)">Thành tiền</th><th style="background:var(--bg);border-bottom:1px solid var(--border)"></th></tr></thead><tbody>';
+  let sh='', total=0;
+  lines.forEach((l,i)=>{
+    const sub=l.price*l.q; total+=sub;
+    html+=`<tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">${l.name}</td><td style="padding:6px 8px;text-align:center;border-bottom:1px solid var(--border)">${l.q}</td><td style="padding:6px 8px;text-align:right;font-weight:500;border-bottom:1px solid var(--border)">${sub.toLocaleString('vi-VN')} đ</td><td style="padding:4px 6px;border-bottom:1px solid var(--border)"><button onclick="removeLine(${i})" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px">✕</button></td></tr>`;
+    sh+=`<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:var(--muted)"><span>${l.name} ×${l.q}</span><span>${sub.toLocaleString('vi-VN')} đ</span></div>`;
+  });
+  ol.innerHTML=html+'</tbody></table>';
+  sl.innerHTML=sh;
+  const ck1=Math.round(total*0.03);
+  document.getElementById('s-before').textContent=total.toLocaleString('vi-VN')+' đ';
+  document.getElementById('s-ck1').textContent='-'+ck1.toLocaleString('vi-VN')+' đ';
+  document.getElementById('s-total').textContent=(total-ck1).toLocaleString('vi-VN')+' đ';
+}
+
+function switchSubPage(pageId,subId,btn){
+  const page=document.getElementById('page-'+pageId);
+  page.querySelectorAll('.sub-page').forEach(s=>s.classList.remove('active'));
+  const sub=document.getElementById(subId);
+  if(sub) sub.classList.add('active');
+  page.querySelectorAll('.section-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+const barData=[55,72,48,68,84,44,100];
+const barDays=['3/6','4/6','5/6','6/6','7/6','8/6','Hôm nay'];
+['chart-bars','r-bars'].forEach(cid=>{
+  const bc=document.getElementById(cid);
+  const lc=document.getElementById(cid==='chart-bars'?'chart-labels':'r-labels');
+  if(!bc) return;
+  barData.forEach((h,i)=>{
+    const b=document.createElement('div');
+    b.style.cssText=`flex:1;background:${i===6?'var(--g)':'var(--gl2)'};border-radius:3px 3px 0 0;height:${h}%`;
+    bc.appendChild(b);
+  });
+  if(lc) barDays.forEach((d,i)=>{
+    const l=document.createElement('div');
+    l.style.cssText=`flex:1;text-align:center;font-size:10px;color:${i===6?'var(--g)':'var(--hint)'};font-weight:${i===6?'600':'400'}`;
+    l.textContent=d;
+    lc.appendChild(l);
+  });
+});
+
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')});
+});
+</script>
+</body>
+</html>
